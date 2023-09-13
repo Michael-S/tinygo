@@ -219,6 +219,15 @@ func (c *compilerContext) getFunction(fn *ssa.Function) (llvm.Type, llvm.Value) 
 	// The exception is the package initializer, which does appear in the
 	// *ssa.Package members and so shouldn't be created here.
 	if fn.Synthetic != "" && fn.Synthetic != "package initializer" && fn.Synthetic != "generic function" {
+
+    if len(fn.Blocks) == 0 {
+			fmt.Printf("symbol.go compilerContext.getFunction fn.Synthetic %s has 0 blocks, will probably crash\n", fn.Synthetic)
+		} else if fn.Synthetic == "Len" {
+      // I separated this one out specifically since it was the first crash I found.
+			fmt.Printf("symbol.go compilerContext.getFunction fn.Synthetic Len has %s blocks\n", len(fn.Blocks))
+		} else {
+      fmt.Printf("symbol.go compilerContext.getFunction fn.Synthetic %s has %s blocks\n", fn.Synthetic, len(fn.Blocks))
+		}
 		irbuilder := c.ctx.NewBuilder()
 		b := newBuilder(c, irbuilder, fn)
 		b.createFunction()
